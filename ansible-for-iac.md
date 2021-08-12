@@ -31,7 +31,7 @@ General tips:
 ---
 ### Define variables according data structure
 
-*services/service-a/inventory/groups/all.yml*
+*services/service-a/inventory/group_vars/all.yml*
 
 ```yaml
 app: service-a
