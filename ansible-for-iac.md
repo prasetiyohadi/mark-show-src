@@ -31,7 +31,7 @@ General tips:
 ---
 ### Define variables according data structure
 
-*staging/services/service-a/inventory/groups/all.yml*
+*services/service-a/inventory/groups/all.yml*
 
 ```yaml
 app: service-a
@@ -112,14 +112,14 @@ _tags:
 - difficult for versioning
 
 ---
-## Migrate to collections/roles (1)
+## Migrate to collections/roles
 
 - easier to reuse/reproduce similar environment
 - enable versioning
 - decouple infrastructure code (collections/roles) and config repository (inventory)
 
 ---
-## Migrate to collections/roles (2)
+## Migrate to collections (1)
 
 [Developing collections](https://docs.ansible.com/ansible/latest/dev_guide/developing_collections.html)
 
@@ -134,14 +134,48 @@ collections:
 ```
 
 ---
-## Migrate to collections/roles (3)
+## Migrate to collections (2)
 
 Run playbook from the collection
 
 ```sh
 ansible-galaxy collection install -r requirements.yml
-ansible-playbook -i staging/services/service-a/inventory \
+ansible-playbook -i services/service-a/inventory \
     my.azure_dns.dns_records -vC
+```
+
+---
+## Migrate to roles (1)
+
+[Creating roles](https://galaxy.ansible.com/docs/contributing/creating_role.html)
+
+*requirements.yml*
+
+```yaml
+roles:
+  - name: my_azure_dns
+    src: git@REPOSITORY_URL:ansible/roles/my_azure_dns.git
+    scm: git
+    version: 0.1.0
+```
+
+---
+## Migrate to roles (2)
+
+*playbooks/dns_records.yml*
+
+```yaml
+- hosts: all
+  roles:
+    - my_azure_dns
+```
+
+Run playbook from the collection
+
+```sh
+ansible-galaxy role install -r requirements.yml
+ansible-playbook -i services/service-a/inventory \
+    playbooks/dns_records.yml -vC
 ```
 
 ---
